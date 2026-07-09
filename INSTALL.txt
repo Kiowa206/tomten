@@ -1,0 +1,59 @@
+# TomTen — iPhone Installation Guide
+
+## What you need
+- A computer with internet access (one time only)
+- A free account at GitHub (github.com) — takes 2 minutes to create
+- Your iPhone 17 connected to the same Wi-Fi as your computer (or any Wi-Fi, just once)
+
+---
+
+## Step 1 — Upload the game files
+
+1. Go to **github.com** and sign in (or create a free account).
+2. Click the **+** button (top right) → **New repository**.
+3. Name it `tomten`, tick **"Add a README file"**, click **Create repository**.
+4. Inside the new repo, click **Add file → Upload files**.
+5. Drag all four files from this folder into the upload box:
+   - `index.html`
+   - `sw.js`
+   - `manifest.json`
+   - `icon-192.svg`
+   - `icon-512.svg`
+6. Click **Commit changes**.
+
+---
+
+## Step 2 — Enable GitHub Pages (free hosting)
+
+1. In your repo, click **Settings** (top menu).
+2. Scroll down to **Pages** (left sidebar).
+3. Under **Source**, choose **Deploy from a branch**.
+4. Set Branch to **main**, folder to **/ (root)**, click **Save**.
+5. Wait about 60 seconds, then refresh — you'll see a green banner with your URL:
+   `https://YOUR-USERNAME.github.io/tomten/`
+
+---
+
+## Step 3 — Install on your iPhone
+
+1. On your iPhone, open **Safari** (must be Safari, not Chrome).
+2. Go to the URL from Step 2: `https://YOUR-USERNAME.github.io/tomten/`
+3. Tap the **Share** button (the box with an arrow pointing up).
+4. Scroll down and tap **"Add to Home Screen"**.
+5. Tap **Add** in the top right.
+
+TomTen now appears on your home screen like any other app.
+
+---
+
+## Step 4 — Play offline
+
+Once installed, **TomTen works with no Wi-Fi or cellular connection**.
+The game is fully stored on your phone after the first visit.
+
+---
+
+## That's it!
+
+The game icon on your home screen opens TomTen full-screen with no browser bar,
+exactly like a native app.
