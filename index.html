@@ -2,13 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="TomTen" />
   <meta name="theme-color" content="#0D0D14" />
+  <meta name="description" content="A number-matching puzzle game. Play offline on your iPhone." />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-touch-fullscreen" content="yes" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.svg" />
+  <link rel="icon" type="image/svg+xml" href="icon-192.svg" />
   <title>TomTen</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -40,12 +44,14 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      height: 100dvh;
+      height: 100%;
       padding: env(safe-area-inset-top, 12px) env(safe-area-inset-right, 0)
                env(safe-area-inset-bottom, 12px) env(safe-area-inset-left, 0);
       overflow-y: auto;
       overflow-x: hidden;
       position: relative;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     /* ── Grain overlay ── */
@@ -232,6 +238,18 @@
       cursor: pointer;
       font-family: 'Courier New', Courier, monospace;
       box-shadow: 0 4px 20px #FF6B6B44;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    @supports (padding: max(0px)) {
+      #app {
+        padding-left: max(12px, env(safe-area-inset-left));
+        padding-right: max(12px, env(safe-area-inset-right));
+        padding-top: max(12px, env(safe-area-inset-top));
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+      }
     }
   </style>
 </head>
@@ -506,8 +524,28 @@ function newGame() {
 }
 
 // ── Boot ───────────────────────────────────────────────────────────────────
-document.getElementById("new-game-btn").addEventListener("click", newGame);
-document.getElementById("restart-btn").addEventListener("click", newGame);
+document.getElementById("new-game-btn").addEventListener("click", newGame, { passive: true });
+document.getElementById("restart-btn").addEventListener("click", newGame, { passive: true });
+
+// Prevent pinch zoom on iOS
+document.addEventListener("touchmove", (e) => {
+  if (e.touches.length > 1) e.preventDefault();
+}, { passive: false });
+
+// Prevent gesture zoom
+document.addEventListener("gesturestart", (e) => {
+  e.preventDefault();
+}, { passive: false });
+
+// Prevent context menu on long press
+document.addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+}, { passive: false });
+
+// Prevent scroll on cells
+document.body.addEventListener("touchmove", (e) => {
+  if (e.target.closest(".cell")) e.preventDefault();
+}, { passive: false });
 
 newGame();
 
