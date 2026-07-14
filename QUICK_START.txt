@@ -1,0 +1,117 @@
+╔═══════════════════════════════════════════════════════════════════════╗
+║                 TOMTEN - IPHONE INSTALLATION QUICK START              ║
+╚═══════════════════════════════════════════════════════════════════════╝
+
+📁 REQUIRED FILES (all 5 must be together):
+  ✓ index.html
+  ✓ manifest.json  
+  ✓ sw.js
+  ✓ icon-192.svg
+  ✓ icon-512.svg
+  
+  Total: ~50 KB
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 3-STEP INSTALLATION (Most People):
+
+  1. HOST THE FILES
+     Choose ONE option:
+     
+     A) GitHub Pages (FREE & EASIEST)
+        • github.com → Create free account
+        • Create new public repo "tomten"  
+        • Upload 5 files
+        • Settings → Pages → Enable
+        • URL: https://username.github.io/tomten
+     
+     B) Web Host (Your own server)
+        • Upload 5 files to your web server
+        • Get the URL: https://example.com/tomten
+     
+     C) Local Network (Testing)
+        • Save 5 files in one folder
+        • Command: python -m http.server 8000
+        • Find your IP: ipconfig (Windows) or ifconfig (Mac)
+        • URL: http://192.168.X.X:8000
+
+  2. OPEN ON iPHONE
+     • Safari → Go to URL from step 1
+     • Tap Share (⬆️ button)
+     • Scroll → "Add to Home Screen"
+     • Tap "Add"
+
+  3. DONE!
+     ✓ Icon on home screen
+     ✓ Works offline after first visit
+     ✓ Plays on any iPhone (iOS 11.3+)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⏱️ TIMING:
+  GitHub Pages setup: 5 minutes (one-time)
+  Install on iPhone: 2 minutes per device
+  First load: 2-3 seconds (downloads & caches)
+  Subsequent loads: <1 second (offline)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 DETAILED GUIDES:
+
+  → TRANSFER_TO_IPHONE.md    (How to move to iPhone - BEST FOR MOST)
+  → INSTALL_IPHONE.md        (iPhone-specific steps - DETAILED)
+  → SETUP.md                 (Complete guide - COMPREHENSIVE)
+  → OFFLINE_README.md        (Technical info - ADVANCED)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❓ COMMON QUESTIONS:
+
+  Q: Will it work offline?
+  A: YES! After first visit with internet, works forever offline.
+
+  Q: How much space does it use?
+  A: ~2 MB on phone. Game files only ~50 KB.
+
+  Q: Can I share it with others?
+  A: YES! Just share the URL. They add to their home screen.
+
+  Q: Do they need internet?
+  A: NO! After they visit once, it caches and works offline.
+
+  Q: Can I update the game?
+  A: YES! Update files on server, next visit gets latest version.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚡ IF SOMETHING DOESN'T WORK:
+
+  App won't install?
+  → Try different browser (Chrome, Firefox)
+  → Check iOS version (need 11.3+)
+  → Refresh page first
+
+  Blank screen?
+  → Hard refresh: Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows)
+  → Or close app completely and reopen
+  
+  Not working offline?
+  → First visit MUST have internet (to cache files)
+  → Close app completely, reopen
+  → Ensure 5+ MB free storage
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎮 YOU'RE READY!
+
+  Best for most people:
+  1. Read: TRANSFER_TO_IPHONE.md
+  2. Choose GitHub Pages option
+  3. Follow the 3 steps above
+  4. Enjoy! 🎮
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Version: 1.0
+Status: Ready to deploy
+License: Check README.md
