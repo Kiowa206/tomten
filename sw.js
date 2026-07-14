@@ -1,62 +1,35 @@
-const CACHE = "tomten-v3";
-const ASSETS = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./icon-192.svg",
-  "./icon-512.svg"
-];
+// TomTen v4 — clears all previous caches on install
+const CACHE = "tomten-v4-20250713";
+const ASSETS = ["./", "./index.html", "./manifest.json", "./icon-192.svg", "./icon-512.svg"];
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open(CACHE)
-      .then((c) => c.addAll(ASSETS))
-      .then(() => self.skipWaiting())
-      .catch(() => {})
-  );
-});
-
-self.addEventListener("activate", (e) => {
+self.addEventListener("install", e => {
+  // Delete every existing cache, then cache fresh assets
   e.waitUntil(
     caches.keys()
-      .then((keys) =>
-        Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-      )
-      .then(() => self.clients.claim())
-      .catch(() => {})
+      .then(keys => Promise.all(keys.map(k => caches.delete(k))))
+      .then(() => caches.open(CACHE))
+      .then(c => c.addAll(ASSETS))
+      .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener("fetch", (e) => {
-  // Only cache GET requests
-  if (e.request.method !== "GET") {
-    return;
-  }
+self.addEventListener("activate", e => {
+  e.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
 
+// Network first, fall back to cache — ensures fresh files are always preferred
+self.addEventListener("fetch", e => {
   e.respondWith(
-    caches.match(e.request)
-      .then((cached) => {
-        if (cached) return cached;
-        return fetch(e.request)
-          .then((response) => {
-            // Don't cache non-successful responses
-            if (!response || response.status !== 200) {
-              return response;
-            }
-            // Clone the response
-            const cloned = response.clone();
-            caches.open(CACHE)
-              .then((c) => c.put(e.request, cloned))
-              .catch(() => {});
-            return response;
-          })
-          .catch(() => {
-            // Offline fallback
-            return caches.match("./index.html");
-          });
+    fetch(e.request)
+      .then(response => {
+        const clone = response.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return response;
       })
-      .catch(() => {
-        return caches.match("./index.html");
-      })
+      .catch(() => caches.match(e.request))
   );
 });

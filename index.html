@@ -2,38 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="TomTen" />
   <meta name="theme-color" content="#0D0D14" />
-  <meta name="description" content="A number-matching puzzle game. Play offline on your iPhone." />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-touch-fullscreen" content="yes" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.svg" />
-  <link rel="icon" type="image/svg+xml" href="icon-192.svg" />
   <title>TomTen</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --bg:       #0D0D14;
-      --surface:  #1A1A2E;
-      --surface2: #0F0F1A;
-      --border:   #2A2A40;
-      --text:     #E8E8F0;
-      --muted:    #555570;
-      --dim:      #666680;
-      --accent:   #FF6B6B;
-      --good:     #1DD1A1;
-      --bad:      #FF6B6B;
-    }
-
     html, body {
       height: 100%;
-      background: var(--bg);
-      color: var(--text);
+      background: #0D0D14;
+      color: #E8E8F0;
       font-family: 'Courier New', Courier, monospace;
       overflow: hidden;
       -webkit-tap-highlight-color: transparent;
@@ -44,65 +27,50 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      height: 100%;
+      height: 100dvh;
       padding: env(safe-area-inset-top, 12px) env(safe-area-inset-right, 0)
                env(safe-area-inset-bottom, 12px) env(safe-area-inset-left, 0);
       overflow-y: auto;
       overflow-x: hidden;
       position: relative;
-      -webkit-user-select: none;
-      user-select: none;
     }
 
-    /* ── Grain overlay ── */
     #grain {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.35;
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.35;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
       background-size: 180px 180px;
     }
 
-    /* ── Header ── */
     #header {
-      width: 100%;
-      max-width: 420px;
+      width: 100%; max-width: 420px;
       padding: 14px 16px 8px;
-      z-index: 1;
-      position: relative;
-      flex-shrink: 0;
+      z-index: 1; position: relative; flex-shrink: 0;
     }
 
     #title {
       font-size: clamp(28px, 9vw, 38px);
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      line-height: 1;
-      margin-bottom: 8px;
+      font-weight: 900; letter-spacing: 0.12em; line-height: 1; margin-bottom: 8px;
     }
-    #title span { color: var(--accent); }
+    #title span { color: #FF6B6B; }
 
-    #stats {
-      display: flex;
-      gap: 18px;
-    }
-    .stat { display: flex; align-items: baseline; gap: 5px; }
-    .stat-val { font-size: clamp(16px, 5vw, 20px); font-weight: 700; color: var(--text); }
-    .stat-lbl { font-size: 10px; color: var(--dim); letter-spacing: 0.1em; }
+    #stats { display: flex; gap: 16px; flex-wrap: wrap; }
+    .stat { display: flex; align-items: baseline; gap: 4px; }
+    .stat-val { font-size: clamp(15px, 4.5vw, 20px); font-weight: 700; color: #E8E8F0; }
+    .stat-lbl { font-size: 10px; color: #666680; letter-spacing: 0.1em; }
 
-    /* ── Board ── */
     #board-wrap {
-      width: 100%;
-      max-width: 420px;
+      width: 100%; max-width: 420px;
       padding: 0 6px;
-      z-index: 1;
-      position: relative;
-      flex-shrink: 0;
+      z-index: 1; position: relative; flex-shrink: 0;
     }
 
-    #board {
+    #board-outer {
+      display: flex; flex-direction: column;
+      gap: clamp(2px, 0.8vw, 4px);
+      width: 100%;
+    }
+
+    .board-row {
       display: grid;
       grid-template-columns: repeat(9, 1fr);
       gap: clamp(2px, 0.8vw, 4px);
@@ -111,145 +79,82 @@
 
     .cell {
       aspect-ratio: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       font-size: clamp(13px, 3.8vw, 20px);
       font-weight: 800;
       font-family: 'Courier New', Courier, monospace;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: #1A1A2E;
+      border: 1px solid #2A2A40;
       border-radius: 4px;
       cursor: pointer;
-      transition: transform 0.1s, background 0.15s, box-shadow 0.15s, opacity 0.2s;
+      transition: transform 0.1s, background 0.15s, box-shadow 0.15s;
       outline: none;
-      user-select: none;
-      -webkit-user-select: none;
+      -webkit-user-select: none; user-select: none;
     }
     .cell.empty {
-      background: var(--surface2);
-      border-color: #1A1A28;
-      cursor: default;
-      color: transparent !important;
+      background: #0F0F1A; border-color: #1A1A28;
+      cursor: default; color: transparent !important;
     }
     .cell.selected {
-      background: #1E1E38;
-      transform: scale(1.08);
-      z-index: 2;
+      background: #1E1E38; transform: scale(1.08); z-index: 2;
     }
-    .cell.flash-good {
-      background: #1A3A2A !important;
-      border-color: var(--good) !important;
-    }
-    .cell.flash-bad {
-      background: #3A1A1A !important;
-      border-color: var(--bad) !important;
-    }
+    .cell.flash-good { background: #1A3A2A !important; border-color: #1DD1A1 !important; }
+    .cell.flash-bad  { background: #3A1A1A !important; border-color: #FF6B6B !important; }
 
-    /* ── Progress ── */
     #progress-wrap {
-      width: calc(100% - 12px);
-      max-width: 408px;
-      height: 3px;
-      background: var(--surface);
-      border-radius: 2px;
-      margin-top: 6px;
-      overflow: hidden;
-      z-index: 1;
-      position: relative;
-      flex-shrink: 0;
+      width: calc(100% - 12px); max-width: 408px;
+      height: 3px; background: #1A1A2E; border-radius: 2px;
+      margin-top: 6px; overflow: hidden;
+      z-index: 1; position: relative; flex-shrink: 0;
     }
     #progress-bar {
       height: 100%;
       background: linear-gradient(90deg, #FF6B6B, #FECA57);
-      border-radius: 2px;
-      transition: width 0.4s ease;
-      width: 0%;
+      border-radius: 2px; transition: width 0.4s ease; width: 0%;
     }
 
-    /* ── Hint ── */
     #hint {
-      font-size: 11px;
-      color: var(--muted);
-      margin: 8px 16px 0;
-      text-align: center;
-      letter-spacing: 0.03em;
-      z-index: 1;
-      position: relative;
-      flex-shrink: 0;
+      font-size: 11px; color: #555570;
+      margin: 8px 16px 0; text-align: center; letter-spacing: 0.03em;
+      z-index: 1; position: relative; flex-shrink: 0;
     }
     #hint b { color: #888898; }
 
-    /* ── Restart ── */
     #restart-btn {
-      margin-top: 10px;
-      background: transparent;
-      border: 1px solid #2A2A44;
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: 0.1em;
-      padding: 6px 18px;
-      border-radius: 20px;
-      cursor: pointer;
+      margin-top: 10px; background: transparent;
+      border: 1px solid #2A2A44; color: #555570;
+      font-size: 12px; letter-spacing: 0.1em;
+      padding: 6px 18px; border-radius: 20px; cursor: pointer;
       font-family: 'Courier New', Courier, monospace;
-      z-index: 1;
-      position: relative;
-      flex-shrink: 0;
+      z-index: 1; position: relative; flex-shrink: 0;
     }
 
-    /* ── Overlay ── */
     #overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
+      display: none; position: fixed; inset: 0;
       background: rgba(0,0,0,0.75);
-      align-items: center;
-      justify-content: center;
+      align-items: center; justify-content: center;
       z-index: 100;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
     }
     #overlay.show { display: flex; }
 
     #overlay-card {
-      background: #13131F;
-      border: 1px solid #2A2A44;
-      border-radius: 16px;
-      padding: 32px 28px;
-      max-width: 300px;
-      width: 85vw;
-      text-align: center;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      background: #13131F; border: 1px solid #2A2A44; border-radius: 16px;
+      padding: 32px 28px; max-width: 300px; width: 85vw;
+      text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
     }
     #overlay-emoji { font-size: 48px; margin-bottom: 12px; }
-    #overlay-title { font-size: 22px; font-weight: 900; color: var(--text); letter-spacing: 0.08em; margin-bottom: 8px; }
+    #overlay-title { font-size: 22px; font-weight: 900; color: #E8E8F0; letter-spacing: 0.08em; margin-bottom: 8px; }
     #overlay-body  { font-size: 13px; color: #888898; margin-bottom: 8px; line-height: 1.5; }
     #overlay-score { font-size: 20px; font-weight: 700; color: #FECA57; margin-bottom: 20px; }
 
     #new-game-btn {
       background: linear-gradient(135deg, #FF6B6B, #FF9F43);
-      border: none;
-      color: #0D0D14;
-      font-size: 14px;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      padding: 12px 32px;
-      border-radius: 30px;
-      cursor: pointer;
+      border: none; color: #0D0D14;
+      font-size: 14px; font-weight: 900; letter-spacing: 0.12em;
+      padding: 12px 32px; border-radius: 30px; cursor: pointer;
       font-family: 'Courier New', Courier, monospace;
       box-shadow: 0 4px 20px #FF6B6B44;
-      -webkit-user-select: none;
-      user-select: none;
-      -webkit-touch-callout: none;
-    }
-
-    @supports (padding: max(0px)) {
-      #app {
-        padding-left: max(12px, env(safe-area-inset-left));
-        padding-right: max(12px, env(safe-area-inset-right));
-        padding-top: max(12px, env(safe-area-inset-top));
-        padding-bottom: max(12px, env(safe-area-inset-bottom));
-      }
     }
   </style>
 </head>
@@ -262,17 +167,16 @@
       <div class="stat"><span class="stat-val" id="s-score">0</span><span class="stat-lbl">PTS</span></div>
       <div class="stat"><span class="stat-val" id="s-cleared">0</span><span class="stat-lbl">CLEARED</span></div>
       <div class="stat"><span class="stat-val" id="s-left">90</span><span class="stat-lbl">LEFT</span></div>
+      <div class="stat"><span class="stat-val" id="s-rows">10</span><span class="stat-lbl">ROWS</span></div>
     </div>
   </div>
 
-  <div id="board-wrap">
-    <div id="board"></div>
-  </div>
+  <div id="board-wrap"><div id="board-outer"></div></div>
 
   <div id="progress-wrap"><div id="progress-bar"></div></div>
-
   <p id="hint">Select two numbers that are <b>equal</b> or <b>sum to 10</b></p>
   <button id="restart-btn">↺ Restart</button>
+  <p style="font-size:9px;color:#333350;margin-top:6px;letter-spacing:0.08em;">v4</p>
 </div>
 
 <div id="overlay">
@@ -287,8 +191,9 @@
 
 <script>
 // ── Constants ──────────────────────────────────────────────────────────────
-const ROWS = 10, COLS = 9;
-const TOTAL = ROWS * COLS;
+const COLS = 9;
+const INITIAL_ROWS = 10;
+const TOTAL_CELLS = INITIAL_ROWS * COLS;
 
 const NUM_COLORS = [
   "", "#FF6B6B", "#FF9F43", "#FECA57", "#48DBFB",
@@ -296,16 +201,17 @@ const NUM_COLORS = [
 ];
 
 // ── State ──────────────────────────────────────────────────────────────────
-let board = [];
-let selected = null;   // [r, c] or null
-let score = 0;
-let removed = 0;
-let gameState = "playing"; // playing | won | stuck
+let board     = [];
+let selected  = null;   // {r, c} or null
+let score     = 0;
+let removed   = 0;
+let gameState = "playing";
+let flashing  = false;  // guard against double-taps during flash
 
 // ── Game logic ─────────────────────────────────────────────────────────────
 function makeBoard() {
   const b = [];
-  for (let r = 0; r < ROWS; r++) {
+  for (let r = 0; r < INITIAL_ROWS; r++) {
     const row = [1,2,3,4,5,6,7,8,9];
     for (let i = row.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -320,19 +226,23 @@ function mathOK(a, b) { return a === b || a + b === 10; }
 
 function isRowEmpty(r) { return board[r].every(v => v === null); }
 
+function pruneEmptyRows() {
+  board = board.filter(row => row.some(v => v !== null));
+}
+
 function pathOK(r1, c1, r2, c2) {
   if (r1 === r2 && c1 === c2) return false;
 
   // Same row
   if (r1 === r2) {
-    const [lo, hi] = [Math.min(c1,c2), Math.max(c1,c2)];
+    const lo = Math.min(c1,c2), hi = Math.max(c1,c2);
     for (let c = lo+1; c < hi; c++) if (board[r1][c] !== null) return false;
     return true;
   }
 
   // Same column
   if (c1 === c2) {
-    const [lo, hi] = [Math.min(r1,r2), Math.max(r1,r2)];
+    const lo = Math.min(r1,r2), hi = Math.max(r1,r2);
     for (let r = lo+1; r < hi; r++) if (board[r][c1] !== null) return false;
     return true;
   }
@@ -348,208 +258,193 @@ function pathOK(r1, c1, r2, c2) {
     return true;
   }
 
-  // Cross-row wrap: last cell of topR → first cell of botR, empty rows between
+  // Cross-row wrap: last occupied cell of topR → first occupied cell of botR
+  // with all rows between them fully empty
   {
     const [topR,topC,botR,botC] = r1<r2 ? [r1,c1,r2,c2] : [r2,c2,r1,c1];
 
     let lastInTop = -1;
-    for (let c = COLS-1; c >= 0; c--) { if (board[topR][c] !== null) { lastInTop = c; break; } }
+    for (let c = COLS-1; c >= 0; c--) {
+      if (board[topR][c] !== null) { lastInTop = c; break; }
+    }
     if (topC !== lastInTop) return false;
 
     let firstInBot = -1;
-    for (let c = 0; c < COLS; c++) { if (board[botR][c] !== null) { firstInBot = c; break; } }
+    for (let c = 0; c < COLS; c++) {
+      if (board[botR][c] !== null) { firstInBot = c; break; }
+    }
     if (botC !== firstInBot) return false;
 
-    for (let r = topR+1; r < botR; r++) { if (!isRowEmpty(r)) return false; }
+    for (let r = topR+1; r < botR; r++) {
+      if (!isRowEmpty(r)) return false;
+    }
     return true;
   }
 }
 
 function hasValidMove() {
   const cells = [];
-  for (let r = 0; r < ROWS; r++)
+  for (let r = 0; r < board.length; r++)
     for (let c = 0; c < COLS; c++)
-      if (board[r][c] !== null) cells.push([r,c]);
+      if (board[r][c] !== null) cells.push([r, c]);
   for (let i = 0; i < cells.length; i++)
     for (let j = i+1; j < cells.length; j++) {
       const [r1,c1] = cells[i], [r2,c2] = cells[j];
-      if (mathOK(board[r1][c1], board[r2][c2]) && pathOK(r1,c1,r2,c2)) return true;
+      if (mathOK(board[r1][c1], board[r2][c2]) && pathOK(r1,c1,r2,c2))
+        return true;
     }
   return false;
 }
 
 function countRemaining() {
   let n = 0;
-  for (let r = 0; r < ROWS; r++)
+  for (let r = 0; r < board.length; r++)
     for (let c = 0; c < COLS; c++)
       if (board[r][c] !== null) n++;
   return n;
 }
 
-// ── DOM helpers ────────────────────────────────────────────────────────────
-function cellEl(r, c) { return document.getElementById(`c-${r}-${c}`); }
-
-function updateStats() {
-  const rem = countRemaining();
-  document.getElementById("s-score").textContent = score;
-  document.getElementById("s-cleared").textContent = removed;
-  document.getElementById("s-left").textContent = rem;
-  document.getElementById("progress-bar").style.width =
-    `${((TOTAL - rem) / TOTAL) * 100}%`;
-}
-
-function setCellStyle(r, c) {
-  const el = cellEl(r, c);
-  if (!el) return;
-  const val = board[r][c];
-  el.className = "cell" + (val === null ? " empty" : "");
-  el.textContent = val !== null ? val : "";
-  el.style.color = val !== null ? NUM_COLORS[val] : "transparent";
-  el.style.boxShadow = "";
-  el.style.transform = "";
-}
-
-function flashCells(cells, type, cb) {
-  cells.forEach(([r,c]) => {
-    const el = cellEl(r,c);
-    if (el) el.classList.add(type === "good" ? "flash-good" : "flash-bad");
-  });
-  setTimeout(() => {
-    cells.forEach(([r,c]) => {
-      const el = cellEl(r,c);
-      if (el) el.classList.remove("flash-good","flash-bad");
-    });
-    if (cb) cb();
-  }, 420);
-}
-
-// ── Render ─────────────────────────────────────────────────────────────────
+// ── Rendering ──────────────────────────────────────────────────────────────
+// Single render function — always rebuilds entire board DOM.
+// Buttons read their row/col from data-r / data-c at click time,
+// so there are no stale closures.
 function renderBoard() {
-  const boardEl = document.getElementById("board");
-  boardEl.innerHTML = "";
-  for (let r = 0; r < ROWS; r++) {
+  const outer = document.getElementById("board-outer");
+  outer.innerHTML = "";
+  for (let r = 0; r < board.length; r++) {
+    const rowDiv = document.createElement("div");
+    rowDiv.className = "board-row";
     for (let c = 0; c < COLS; c++) {
-      const btn = document.createElement("button");
-      btn.id = `c-${r}-${c}`;
-      btn.className = "cell";
       const val = board[r][c];
-      if (val === null) btn.classList.add("empty");
+      const btn = document.createElement("button");
+      btn.className = "cell" + (val === null ? " empty" : "");
       btn.textContent = val !== null ? val : "";
       btn.style.color = val !== null ? NUM_COLORS[val] : "transparent";
-      btn.addEventListener("click", () => handleCell(r, c));
-      boardEl.appendChild(btn);
+      // ── KEY FIX: store position in data attributes, read at click time ──
+      btn.dataset.r = r;
+      btn.dataset.c = c;
+      rowDiv.appendChild(btn);
     }
+    outer.appendChild(rowDiv);
   }
 }
 
-// ── Interaction ────────────────────────────────────────────────────────────
-function handleCell(r, c) {
-  if (gameState !== "playing") return;
-  if (board[r][c] === null) return;
+// Update stats bar only — no DOM rebuild
+function updateStats() {
+  const rem = countRemaining();
+  document.getElementById("s-score").textContent   = score;
+  document.getElementById("s-cleared").textContent = removed;
+  document.getElementById("s-left").textContent    = rem;
+  document.getElementById("s-rows").textContent    = board.length;
+  document.getElementById("progress-bar").style.width =
+    `${((TOTAL_CELLS - rem) / TOTAL_CELLS) * 100}%`;
+}
+
+// ── Single delegated click handler on the board ────────────────────────────
+document.getElementById("board-outer").addEventListener("click", function(e) {
+  const btn = e.target.closest("button.cell");
+  if (!btn || btn.classList.contains("empty")) return;
+  if (gameState !== "playing" || flashing) return;
+
+  // Read live position from data attributes — never stale
+  const r = parseInt(btn.dataset.r, 10);
+  const c = parseInt(btn.dataset.c, 10);
 
   if (!selected) {
-    selected = [r, c];
-    const el = cellEl(r, c);
-    if (el) {
-      el.classList.add("selected");
-      el.style.boxShadow = `0 0 0 2.5px ${NUM_COLORS[board[r][c]]}, 0 0 14px ${NUM_COLORS[board[r][c]]}88`;
-    }
+    selected = { r, c };
+    btn.classList.add("selected");
+    btn.style.boxShadow = `0 0 0 2.5px ${NUM_COLORS[board[r][c]]}, 0 0 14px ${NUM_COLORS[board[r][c]]}88`;
     return;
   }
 
-  const [r1, c1] = selected;
+  const { r: r1, c: c1 } = selected;
 
-  // Deselect same cell
+  // Tap the same cell → deselect
   if (r1 === r && c1 === c) {
-    const el = cellEl(r1, c1);
-    if (el) { el.classList.remove("selected"); el.style.boxShadow = ""; }
+    btn.classList.remove("selected");
+    btn.style.boxShadow = "";
     selected = null;
     return;
   }
 
-  const v1 = board[r1][c1], v2 = board[r][c];
-  const isMath = mathOK(v1, v2);
-  const isPath = pathOK(r1, c1, r, c);
-
-  // Clear selection highlight
-  const selEl = cellEl(r1, c1);
-  if (selEl) { selEl.classList.remove("selected"); selEl.style.boxShadow = ""; }
+  // Clear selection highlight from first cell
+  const firstBtn = document.querySelector(`button.cell[data-r="${r1}"][data-c="${c1}"]`);
+  if (firstBtn) { firstBtn.classList.remove("selected"); firstBtn.style.boxShadow = ""; }
   selected = null;
 
-  if (!isMath || !isPath) {
-    flashCells([[r1,c1],[r,c]], "bad");
-    return;
-  }
+  const v1 = board[r1][c1];
+  const v2 = board[r][c];
 
-  // Valid move
-  flashCells([[r1,c1],[r,c]], "good", () => {
+  const ok = mathOK(v1, v2) && pathOK(r1, c1, r, c);
+
+  // Flash both cells
+  flashing = true;
+  const flashClass = ok ? "flash-good" : "flash-bad";
+  const b1 = document.querySelector(`button.cell[data-r="${r1}"][data-c="${c1}"]`);
+  const b2 = document.querySelector(`button.cell[data-r="${r}"][data-c="${c}"]`);
+  if (b1) b1.classList.add(flashClass);
+  if (b2) b2.classList.add(flashClass);
+
+  setTimeout(() => {
+    flashing = false;
+    if (!ok) {
+      if (b1) b1.classList.remove(flashClass);
+      if (b2) b2.classList.remove(flashClass);
+      return;
+    }
+
+    // Valid move — update board data
     board[r1][c1] = null;
     board[r][c]   = null;
     removed += 2;
     score += (v1 + v2 === 10 ? 20 : v1 === v2 ? 15 : 10);
 
-    setCellStyle(r1, c1);
-    setCellStyle(r, c);
+    // Prune empty rows
+    const rowsBefore = board.length;
+    pruneEmptyRows();
+    const rowsAfter = board.length;
+
+    // Rebuild DOM (always needed after clearing cells; cheap at this scale)
+    renderBoard();
     updateStats();
 
     const rem = countRemaining();
-    if (rem === 0)          { endGame("won");   return; }
-    if (!hasValidMove())    { endGame("stuck");  return; }
-  });
-}
+    if (rem === 0)       { endGame("won");   return; }
+    if (!hasValidMove()) { endGame("stuck"); return; }
+  }, 420);
+});
 
 // ── End game ───────────────────────────────────────────────────────────────
 function endGame(state) {
   gameState = state;
   const rem = countRemaining();
-  document.getElementById("overlay-emoji").textContent  = state === "won" ? "🎉" : "😔";
-  document.getElementById("overlay-title").textContent  = state === "won" ? "Board Cleared!" : "No More Moves";
-  document.getElementById("overlay-body").textContent   = state === "won"
-    ? `Amazing! You cleared all ${TOTAL} cells.`
+  document.getElementById("overlay-emoji").textContent = state === "won" ? "🎉" : "😔";
+  document.getElementById("overlay-title").textContent = state === "won" ? "Board Cleared!" : "No More Moves";
+  document.getElementById("overlay-body").textContent  = state === "won"
+    ? `Amazing! You cleared all ${TOTAL_CELLS} cells.`
     : `${rem} cells remain. No valid moves left.`;
-  document.getElementById("overlay-score").textContent  = `Score: ${score}`;
+  document.getElementById("overlay-score").textContent = `Score: ${score}`;
   document.getElementById("overlay").classList.add("show");
 }
 
 // ── New game ───────────────────────────────────────────────────────────────
 function newGame() {
-  board = makeBoard();
-  selected = null;
-  score = 0;
-  removed = 0;
+  board     = makeBoard();
+  selected  = null;
+  score     = 0;
+  removed   = 0;
   gameState = "playing";
+  flashing  = false;
   document.getElementById("overlay").classList.remove("show");
   renderBoard();
   updateStats();
 }
 
 // ── Boot ───────────────────────────────────────────────────────────────────
-document.getElementById("new-game-btn").addEventListener("click", newGame, { passive: true });
-document.getElementById("restart-btn").addEventListener("click", newGame, { passive: true });
-
-// Prevent pinch zoom on iOS
-document.addEventListener("touchmove", (e) => {
-  if (e.touches.length > 1) e.preventDefault();
-}, { passive: false });
-
-// Prevent gesture zoom
-document.addEventListener("gesturestart", (e) => {
-  e.preventDefault();
-}, { passive: false });
-
-// Prevent context menu on long press
-document.addEventListener("contextmenu", (e) => {
-  e.preventDefault();
-}, { passive: false });
-
-// Prevent scroll on cells
-document.body.addEventListener("touchmove", (e) => {
-  if (e.target.closest(".cell")) e.preventDefault();
-}, { passive: false });
-
+document.getElementById("new-game-btn").addEventListener("click", newGame);
+document.getElementById("restart-btn").addEventListener("click", newGame);
 newGame();
 
-// ── Service Worker registration ────────────────────────────────────────────
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
